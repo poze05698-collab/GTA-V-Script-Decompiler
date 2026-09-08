@@ -11,6 +11,9 @@ jobs:
       - name: Baixar projeto
         uses: actions/checkout@v4
 
+      - name: Configurar MSBuild
+        uses: microsoft/setup-msbuild@v3
+
       - name: Restaurar pacotes
         shell: powershell
         run: |
