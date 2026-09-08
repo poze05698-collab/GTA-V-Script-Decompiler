@@ -1,0 +1,38 @@
+name: Decompilar CSC PS3
+
+on:
+  workflow_dispatch:
+
+jobs:
+  decompile:
+    runs-on: windows-2022
+
+    steps:
+      - name: Baixar projeto
+        uses: actions/checkout@v4
+
+      - name: Restaurar pacotes
+        shell: powershell
+        run: |
+          nuget restore "GTA V Script Decompiler.sln"
+
+      - name: Compilar decompiler
+        shell: powershell
+        run: |
+          msbuild "GTA V Script Decompiler.sln" /p:Configuration=Release /p:Platform="Any CPU"
+
+      - name: Decompilar CSC PS3
+        shell: powershell
+        run: |
+          New-Item -ItemType Directory -Force -Path "resultado"
+          & ".\GTA V Script Decompiler\bin\Release\decompiler.exe" `
+            -i "Abrir_Fechar_Mod.csc" `
+            -o "resultado\Abrir_Fechar_Mod.c" `
+            -c vconsole `
+            -f
+
+      - name: Enviar resultado
+        uses: actions/upload-artifact@v4
+        with:
+          name: resultado-decompilacao
+          path: resultado/
